@@ -68,18 +68,20 @@ describe "Imdb::Movie" do
       end
 
       it 'should return the imdb actor number for each cast member' do
-        @movie.cast_member_ids.sort.should == [
-          "nm0000246", "nm0000614", "nm0000889", "nm0000952", "nm0001108", "nm0001817", "nm0005598",
-          "nm0033749", "nm0040472", "nm0048326", "nm0072054", "nm0094770", "nm0101088", "nm0112505",
-          "nm0112779", "nm0119594", "nm0127960", "nm0142420", "nm0160690", "nm0162041", "nm0234426",
-          "nm0236525", "nm0239958", "nm0278010", "nm0296791", "nm0319739", "nm0322339", "nm0324231",
-          "nm0326276", "nm0338808", "nm0356114", "nm0370729", "nm0383487", "nm0416429", "nm0421114",
-          "nm0441665", "nm0484360", "nm0484650", "nm0493493", "nm0502959", "nm0503610", "nm0504342",
-          "nm0539639", "nm0546076", "nm0546747", "nm0662568", "nm0669625", "nm0681604", "nm0687270",
-          "nm0688235", "nm0718021", "nm0731114", "nm0748041", "nm0776208", "nm0793363", "nm0852311",
-          "nm0870729", "nm0882139", "nm0902455", "nm0907234", "nm0924636", "nm0936591", "nm0958105",
-          "nm2476262", "nm2565888"
-        ].sort
+        @movie.cast_member_ids.sort.should ==  [
+          "nm0000246", "nm0000614", "nm0000889", "nm0000952", "nm0001108", 
+          "nm0001817", "nm0005598", "nm0033749", "nm0040472", "nm0048326", 
+          "nm0072054", "nm0094770", "nm0101088", "nm0112505", "nm0112779", 
+          "nm0119594", "nm0127960", "nm0142420", "nm0160690", "nm0162041", 
+          "nm0234426", "nm0236525", "nm0239958", "nm0278010", "nm0296791", 
+          "nm0319739", "nm0322339", "nm0324231", "nm0326276", "nm0338808", 
+          "nm0356114", "nm0370729", "nm0383487", "nm0416429", "nm0421114", 
+          "nm0441665", "nm0484360", "nm0484650", "nm0493493", "nm0502959",
+          "nm0503610", "nm0504342", "nm0539639", "nm0546076", "nm0546747", 
+          "nm0662568", "nm0669625", "nm0681604", "nm0687270", "nm0688235", 
+          "nm0718021", "nm0731114", "nm0776208", "nm0793363", "nm0852311", 
+          "nm0870729", "nm0882139", "nm0902455", "nm0907234", "nm0924636",
+          "nm0936591", "nm0958105", "nm2476262", "nm2565888"].sort
       end
     end
 
@@ -216,12 +218,22 @@ describe "Imdb::Movie" do
       movie.mpaa_rating.should == "Rated R for language and prison violence (certificate 33087)"
     end
 
+    it "should find the mpaa rating code" do
+      movie = Imdb::Movie.new("0111161")
+      movie.mpaa_rating_code.should == "R"
+    end
+
     it "should be nil when not present" do
       movie = Imdb::Movie.new("0095016")
       movie.mpaa_rating.should be_nil
     end
-  end
 
+    it "should find the mpaa rating code" do
+      movie = Imdb::Movie.new("0095016")
+      movie.mpaa_rating_code.should == "R"
+    end
+  end
+  
   describe "with no submitted poster" do
 
     before(:each) do
@@ -244,7 +256,8 @@ describe "Imdb::Movie" do
     it "should return the release date for movies" do
       movie = Imdb::Movie.new('0111161')
       # FIXME: this date is geo-localized, leading to false positives
-      movie.release_date.should eql("2 March 1995 (Netherlands)")
+      #movie.release_date.should eql("2 March 1995 (Netherlands)")
+      movie.release_date.should eql("23 September 1994 (USA)")
     end
   end
 

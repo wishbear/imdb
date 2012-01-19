@@ -139,6 +139,10 @@ module Imdb
       document.search("h5[text()='MPAA:'] ~ div").first.innerHTML.strip.imdb_unescape_html rescue nil
     end
 
+    def mpaa_rating_code
+      document.search("h5[text()='Certification:'] ~ div.info-content a[text()^='USA:']").first.innerHTML.strip.imdb_unescape_html.gsub('USA:','') rescue nil
+    end
+
     # Returns a string containing the title
     def title(force_refresh = false)
       if @title && !force_refresh
