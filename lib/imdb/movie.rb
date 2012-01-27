@@ -19,6 +19,28 @@ module Imdb
       @also_known_as = also_known_as
     end
 
+    def awards      
+      rows = awards_document.search('.awards table tr').select{ |n| n.search('td').count > 2 }
+      result = rows.map do |row|
+        elems = row.search('td')
+        award = nil
+        if elems.count == 3 && elems[0].search('b').count == 1
+          type = elems[0]
+          award = elems[1]
+        elsif elems.count == 4 && elems[1].search('b').count == 1
+          year = elems.first.innerText.strip.to_i
+          type = elems[1]
+          award = elems[2]
+        end
+        {type: type.innerText.strip.downcase, year: year, award: award.innerText.strip} if award
+      end
+      result.compact!
+    end
+    
+    def awards_document
+      @awards_document ||= Hpricot(open( "http://akas.imdb.com/title/tt#{@id}/awards"))
+    end
+
     # Returns an array of cast members hashes
     def actors
       cast = []
