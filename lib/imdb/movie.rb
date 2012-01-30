@@ -47,8 +47,7 @@ module Imdb
       document.search("table.cast tr").each do |tr|
         member = {}
         tr.search("td.nm a") do |td|
-          member[:name] = td.innerHTML.strip.imdb_unescape_html  
-          member[:imdb_id] = td['href'].sub(%r{^/name/(.*)/}, '\1') 
+          member[:person] = Person.new(td['href'].sub(%r{^/name/nm(.*)/}, '\1') )
         end
         member[:character] = tr.search("td.char a").innerHTML.strip.imdb_unescape_html   
         cast << member
@@ -63,7 +62,7 @@ module Imdb
     end
 
     def cast_member_ids
-      document.search("table.cast td.nm a").map {|l| l['href'].sub(%r{^/name/(.*)/}, '\1') }
+      document.search("table.cast td.nm a").map {|l| l['href'].sub(%r{^/name/nm(.*)/}, '\1') }
     end
 
     # Returns an array with cast characters
@@ -86,10 +85,7 @@ module Imdb
     def directors
       directors = []
       document.search("h5[text()^='Director'] ~ a").each do |a|
-        director = {}
-        director[:name] = a.innerHTML.strip.imdb_unescape_html
-        director[:imdb_id] = a['href'].sub(%r{^/name/(.*)/}, '\1') 
-        directors << director
+        directors << Person.new(a['href'].sub(%r{^/name/nm(.*)/}, '\1'))
       end
       directors
       rescue []

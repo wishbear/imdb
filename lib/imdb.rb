@@ -6,6 +6,8 @@ require 'rubygems'
 require 'hpricot'
 
 require 'imdb/movie'
+require 'imdb/person'
+
 require 'imdb/movie_list'
 require 'imdb/search'
 require 'imdb/top_250'
