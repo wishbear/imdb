@@ -38,7 +38,7 @@ module Imdb
     end
     
     def awards_document
-      @awards_document ||= Hpricot(open( "http://akas.imdb.com/title/tt#{@id}/awards"))
+      @awards_document ||= Nokogiri(open( "http://akas.imdb.com/title/tt#{@id}/awards"))
     end
 
     # Returns an array of cast members hashes
@@ -182,9 +182,9 @@ module Imdb
 
     private
 
-    # Returns a new Hpricot document for parsing.
+    # Returns a new Nokogiri document for parsing.
     def document
-      @document ||= Hpricot(Imdb::Movie.find_by_id(@id))
+      @document ||= Nokogiri(Imdb::Movie.find_by_id(@id))
     end
 
     # Use HTTParty to fetch the raw HTML for this movie.

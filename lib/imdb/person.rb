@@ -49,14 +49,14 @@ module Imdb
     end
     
     def main_document
-      @main_document ||= Hpricot open("http://www.imdb.com/name/nm#{@id}")
+      @main_document ||= Nokogiri open("http://www.imdb.com/name/nm#{@id}")
     end
     def bio_document
-      @bio_document ||= Hpricot open("http://www.imdb.com/name/nm#{@id}/bio")
+      @bio_document ||= Nokogiri open("http://www.imdb.com/name/nm#{@id}/bio")
     end
     
     def photo_document
-      @photo_document ||= if photo_document_url then Hpricot open("http://www.imdb.com" + photo_document_url) else nil end
+      @photo_document ||= if photo_document_url then Nokogiri open("http://www.imdb.com" + photo_document_url) else nil end
     end
     
     def photo_document_url

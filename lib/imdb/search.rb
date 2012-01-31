@@ -23,7 +23,7 @@ module Imdb
     
     private
     def document
-      @document ||= Hpricot(Imdb::Search.query(@query))
+      @document ||= Nokogiri(Imdb::Search.query(@query))
     end
     
     def self.query(query)
