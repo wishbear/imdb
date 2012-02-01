@@ -615,7 +615,7 @@ function google_afs_request_done(google_ads) {
      s+='<small style="color:#003399;">'+google_ads[x].visible_url+'</small></a>'; if (x+1<n) { s+="<br><br>";} s+='</li>';
    }
    s+="</ul>";
-   parentDiv.innerHTML = s;
+   parentDiv.inner_html = s;
  } catch (e) { }
  return;
 }

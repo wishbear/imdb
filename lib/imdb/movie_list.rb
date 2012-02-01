@@ -8,12 +8,12 @@ module Imdb
     private
     def parse_movies
       document.search('a[@href^="/title/tt"]').reject do |element|
-        element.innerHTML.imdb_strip_tags.empty? ||
-        element.parent.innerHTML =~ /media from/i
+        element.inner_html.imdb_strip_tags.empty? ||
+        element.parent.inner_html =~ /media from/i
       end.map do |element|
         id = element['href'][/\d+/]
         
-        data = element.parent.innerHTML.split("<br />")
+        data = element.parent.inner_html.split("<br />")
         if !data[0].nil? && !data[1].nil? && data[0] =~ /img/
           title = data[1]
         else

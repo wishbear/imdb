@@ -13,13 +13,13 @@ module Imdb
     
     def birthdate
       
-      date_month = bio_document.at("h5[text()*='Date of Birth']").next_sibling.inner_text.strip rescue ""
+      date_month = bio_document.at("h5[text()*='Date of Birth']").next_element.inner_text.strip rescue ""
       year = bio_document.at("a[@href*='birth_year']").inner_text.strip rescue ""
       Date.parse("#{date_month} #{year}") rescue nil
     end
     
     def deathdate
-      date_month = bio_document.at("h5[text()*='Date of Death']").next_sibling.inner_text.strip rescue ""
+      date_month = bio_document.at("h5[text()*='Date of Death']").next_element.inner_text.strip rescue ""
       year = bio_document.at("a[@href*='death_date']").inner_text.strip rescue ""
       Date.parse("#{date_month} #{year}") rescue nil
       
@@ -34,7 +34,7 @@ module Imdb
     end
 
     def biography
-      bio_document.at("h5[text()*='Biography']").next_sibling.inner_text rescue nil
+      bio_document.at("h5[text()*='Biography']").next_element.inner_text rescue nil
     end
     
     def photo
@@ -42,10 +42,11 @@ module Imdb
     end
     
     def filmography
-      as_actor = main_document.at("#filmo-head-Actor").next_sibling.search('b a').map{|e| e.get_attribute('href')[/tt(\d+)/, 1] } rescue [] 
-      as_director = main_document.at("#filmo-head-Director").next_sibling.search('b a').map{|e| e.get_attribute('href')[/tt(\d+)/, 1] } rescue [] 
-      as_composer = main_document.at("#filmo-head-Composer").next_sibling.search('b a').map{|e| e.get_attribute('href')[/tt(\d+)/, 1] } rescue [] 
-      {actor: as_actor.map{|m| Movie.new(m)}, director: as_director.map{|m| Movie.new(m)}, composer: as_composer.map{|m| Movie.new(m)} }
+      as_writer = main_document.at("#filmo-head-Writer").next_element.search('b a').map{|e| e.get_attribute('href')[/tt(\d+)/, 1] } rescue [] 
+      as_actor = main_document.at("#filmo-head-Actor").next_element.search('b a').map{|e| e.get_attribute('href')[/tt(\d+)/, 1] } rescue [] 
+      as_director = main_document.at("#filmo-head-Director").next_element.search('b a').map{|e| e.get_attribute('href')[/tt(\d+)/, 1] } rescue [] 
+      as_composer = main_document.at("#filmo-head-Composer").next_element.search('b a').map{|e| e.get_attribute('href')[/tt(\d+)/, 1] } rescue [] 
+      {writer: as_writer.map{|m| Movie.new(m)}, actor: as_actor.map{|m| Movie.new(m)}, director: as_director.map{|m| Movie.new(m)}, composer: as_composer.map{|m| Movie.new(m)} }
     end
     
     def main_document

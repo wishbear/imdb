@@ -28,11 +28,11 @@ module Imdb
           type = elems[0]
           award = elems[1]
         elsif elems.count == 4 && elems[1].search('b').count == 1
-          year = elems.first.innerText.strip.to_i
+          year = elems.first.inner_text.strip.to_i
           type = elems[1]
           award = elems[2]
         end
-        {type: type.innerText.strip.downcase, year: year, award: award.innerText.strip} if award
+        {type: type.inner_text.strip.downcase, year: year, award: award.inner_text.strip} if award
       end
       result.compact!
     end
@@ -49,7 +49,7 @@ module Imdb
         tr.search("td.nm a") do |td|
           member[:person] = Person.new(td['href'].sub(%r{^/name/nm(.*)/}, '\1') )
         end
-        member[:character] = tr.search("td.char a").innerHTML.strip.imdb_unescape_html   
+        member[:character] = tr.search("td.char a").inner_html.strip.imdb_unescape_html   
         cast << member
       end
       cast
@@ -58,7 +58,7 @@ module Imdb
 
     # Returns an array with cast members
     def cast_members
-      document.search("table.cast td.nm a").map { |link| link.innerHTML.strip.imdb_unescape_html } rescue []
+      document.search("table.cast td.nm a").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
     end
 
     def cast_member_ids
@@ -67,7 +67,7 @@ module Imdb
 
     # Returns an array with cast characters
     def cast_characters
-      document.search("table.cast td.char").map { |link| link.innerText } rescue []
+      document.search("table.cast td.char").map { |link| link.inner_text } rescue []
     end
 
     # Returns an array with cast members and characters
@@ -93,7 +93,7 @@ module Imdb
     
     # Returns the name of the director
     def director
-      document.search("h5[text()^='Director'] ~ a").map { |link| link.innerHTML.strip.imdb_unescape_html } rescue []
+      document.search("h5[text()^='Director'] ~ a").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
     end
 
     # Returns the url to the "Watch a trailer" page
@@ -103,27 +103,27 @@ module Imdb
 
     # Returns an array of genres (as strings)
     def genres
-      document.search("h5[text()='Genre:'] ~ a[@href*=/Sections/Genres/']").map { |link| link.innerHTML.strip.imdb_unescape_html } rescue []
+      document.search("h5[text()='Genre:'] ~ a[@href*=/Sections/Genres/']").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
     end
 
     # Returns an array of languages as strings.
     def languages
-      document.search("h5[text()='Language:'] ~ a[@href*=/language/']").map { |link| link.innerHTML.strip.imdb_unescape_html } rescue []
+      document.search("h5[text()='Language:'] ~ a[@href*=/language/']").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
     end
 
     # Returns an array of countries as strings.
     def countries
-      document.search("h5[text()='Country:'] ~ a[@href*=/country/']").map { |link| link.innerHTML.strip.imdb_unescape_html } rescue []
+      document.search("h5[text()='Country:'] ~ a[@href*=/country/']").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
     end
 
     # Returns the duration of the movie in minutes as an integer.
     def length
-      document.search("//h5[text()='Runtime:']/..").innerHTML[/\d+ min/].to_i rescue nil
+      document.search("//h5[text()='Runtime:']/..").inner_html[/\d+ min/].to_i rescue nil
     end
 
     # Returns a string containing the plot.
     def plot
-      sanitize_plot(document.search("h5[text()='Plot:'] ~ div").first.innerHTML) rescue nil
+      sanitize_plot(document.search("h5[text()='Plot:'] ~ div").first.inner_html) rescue nil
     end
 
     # Returns a string containing the URL to the movie poster.
@@ -139,26 +139,26 @@ module Imdb
 
     # Returns a float containing the average user rating
     def rating
-      document.at(".starbar-meta b").innerHTML.strip.imdb_unescape_html.split('/').first.to_f rescue nil
+      document.at(".starbar-meta b").inner_html.strip.imdb_unescape_html.split('/').first.to_f rescue nil
     end
 
     # Returns an int containing the number of user ratings
     def votes
-      document.at("#tn15rating .tn15more").innerHTML.strip.imdb_unescape_html.gsub(/[^\d+]/, "").to_i rescue nil
+      document.at("#tn15rating .tn15more").inner_html.strip.imdb_unescape_html.gsub(/[^\d+]/, "").to_i rescue nil
     end
 
     # Returns a string containing the tagline
     def tagline
-      document.search("h5[text()='Tagline:'] ~ div").first.innerHTML.gsub(/<.+>.+<\/.+>/, '').strip.imdb_unescape_html rescue nil
+      document.search("h5[text()='Tagline:'] ~ div").first.inner_html.gsub(/<.+>.+<\/.+>/, '').strip.imdb_unescape_html rescue nil
     end
 
     # Returns a string containing the mpaa rating and reason for rating
     def mpaa_rating
-      document.search("h5[text()='MPAA:'] ~ div").first.innerHTML.strip.imdb_unescape_html rescue nil
+      document.search("h5[text()='MPAA:'] ~ div").first.inner_html.strip.imdb_unescape_html rescue nil
     end
 
     def mpaa_rating_code
-      document.search("h5[text()='Certification:'] ~ div.info-content a[text()^='USA:']").first.innerHTML.strip.imdb_unescape_html.gsub('USA:','') rescue nil
+      document.search("h5[text()='Certification:'] ~ div.info-content a[text()^='USA:']").first.inner_html.strip.imdb_unescape_html.gsub('USA:','') rescue nil
     end
 
     # Returns a string containing the title
@@ -166,18 +166,18 @@ module Imdb
       if @title && !force_refresh
         @title
       else
-        @title = document.at("h1").innerHTML.split('<span').first.strip.imdb_unescape_html rescue nil
+        @title = document.at("h1").inner_html.split('<span').first.strip.imdb_unescape_html rescue nil
       end
     end
 
     # Returns an integer containing the year (CCYY) the movie was released in.
     def year
-      document.search('a[@href^="/year/"]').innerHTML.to_i
+      document.search('a[@href^="/year/"]').inner_html.to_i
     end
 
     # Returns release date for the movie.
     def release_date
-      sanitize_release_date(document.search('h5[text()*=Release Date]').first.next_sibling.innerHTML.to_s) rescue nil
+      sanitize_release_date(document.search('h5[text()*=Release Date]').first.next_element.inner_html.to_s) rescue nil
     end
 
     private
