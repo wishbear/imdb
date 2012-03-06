@@ -1,8 +1,11 @@
 module Imdb
   class Person
+    attr_reader :id
+
     def initialize(imdb_id)
       @id = imdb_id
     end
+
     def name
       bio_document.at("a[@class='main']").inner_text rescue nil
     end
@@ -10,7 +13,7 @@ module Imdb
     def real_name
       bio_document.at("h5[text()*='Birth Name']").next.inner_text.strip rescue nil
     end
-    
+
     def birthdate
       
       date_month = bio_document.at("h5[text()*='Date of Birth']").next_element.inner_text.strip rescue ""

@@ -19,7 +19,7 @@ module Imdb
       @also_known_as = also_known_as
     end
 
-    def awards      
+    def awards
       rows = awards_document.search('.awards table tr').select{ |n| n.search('td').count > 2 }
       result = rows.map do |row|
         elems = row.search('td')
@@ -84,7 +84,7 @@ module Imdb
     # Returns a array of the director hashes
     def directors
       directors = []
-      document.search("h5[text()^='Director'] ~ a").each do |a|
+      document.search("h5[text()^='Director'] ~ * a").each do |a|
         directors << Person.new(a['href'].sub(%r{^/name/nm(.*)/}, '\1'))
       end
       directors
@@ -93,27 +93,27 @@ module Imdb
     
     # Returns the name of the director
     def director
-      document.search("h5[text()^='Director'] ~ a").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
+      document.search("h5[text()^='Director'] ~ * a").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
     end
 
     # Returns the url to the "Watch a trailer" page
     def trailer_url
-      'http://imdb.com' + document.at("a[@href*=/video/screenplay/]")["href"] rescue nil
+      'http://imdb.com' + document.at("a[@href*='/video/screenplay/']")["href"] rescue nil
     end
 
     # Returns an array of genres (as strings)
     def genres
-      document.search("h5[text()='Genre:'] ~ a[@href*=/Sections/Genres/']").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
+      document.search("h5[text()='Genre:'] ~ * a[@href*='/Sections/Genres/']").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
     end
 
     # Returns an array of languages as strings.
     def languages
-      document.search("h5[text()='Language:'] ~ a[@href*=/language/']").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
+      document.search("h5[text()='Language:'] ~ * a[@href*='/language/']").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
     end
 
     # Returns an array of countries as strings.
     def countries
-      document.search("h5[text()='Country:'] ~ a[@href*=/country/']").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
+      document.search("h5[text()='Country:'] ~ * a[@href*='/country/']").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
     end
 
     # Returns the duration of the movie in minutes as an integer.
@@ -177,7 +177,7 @@ module Imdb
 
     # Returns release date for the movie.
     def release_date
-      sanitize_release_date(document.search('h5[text()*=Release Date]').first.next_element.inner_html.to_s) rescue nil
+      sanitize_release_date(document.search("h5[text()*='Release Date']").first.next_element.inner_html.to_s.strip) rescue nil
     end
 
     private
