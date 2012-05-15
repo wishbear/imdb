@@ -43,13 +43,40 @@ module Imdb
     def photo
       photo_document.at("img#primary-img").get_attribute('src') if photo_document 
     end
-    
+
+    ##
+    #  Getting array with person appearances as {role}
+    #
+    def as role
+      # Imdb code in exrtemely invalid (> 300 errors per one page), 
+      # so we need to clean it before any parsing
+      raw_html = open("http://www.imdb.com/name/nm#{@id}").read
+      cleared_html = raw_html.gsub("<div class=\"clear\"/>&nbsp;</div>", '')
+      person_page = Nokogiri::HTML(cleared_html)
+      
+      begin
+        person_page.at("#filmo-head-#{role}").next_element.search('.filmo-row b a').map do |e| 
+          e.get_attribute('href')[/tt(\d+)/, 1]
+        end
+      rescue
+        []
+      end
+    end
+   
+    ##
+    #  Getting all appearances of Person
+    #
     def filmography
-      as_writer = main_document.at("#filmo-head-Writer").next_element.search('b a').map{|e| e.get_attribute('href')[/tt(\d+)/, 1] } rescue [] 
-      as_actor = main_document.at("#filmo-head-Actor").next_element.search('b a').map{|e| e.get_attribute('href')[/tt(\d+)/, 1] } rescue [] 
-      as_director = main_document.at("#filmo-head-Director").next_element.search('b a').map{|e| e.get_attribute('href')[/tt(\d+)/, 1] } rescue [] 
-      as_composer = main_document.at("#filmo-head-Composer").next_element.search('b a').map{|e| e.get_attribute('href')[/tt(\d+)/, 1] } rescue [] 
-      {writer: as_writer.map{|m| Movie.new(m)}, actor: as_actor.map{|m| Movie.new(m)}, director: as_director.map{|m| Movie.new(m)}, composer: as_composer.map{|m| Movie.new(m)} }
+      {
+        writer:     as('Writer').map { |m| Movie.new(m) }, 
+        actor:      as('Actor').map { |m| Movie.new(m) }, 
+        actress:    as('Actress').map { |m| Movie.new(m) }, 
+        director:   as('Director').map { |m| Movie.new(m) }, 
+        composer:   as('Composer').map { |m| Movie.new(m) },
+        producer:   as('Producer').map { |m| Movie.new(m) },
+        pelf:       as('Self').map { |m| Movie.new(m) },
+        soundtrack: as('Soundtrack').map { |m| Movie.new(m) }
+      }
     end
     
     def main_document
