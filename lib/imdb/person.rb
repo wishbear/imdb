@@ -48,7 +48,7 @@ module Imdb
     #  Getting array with person appearances as {role}
     #
     def as role
-      # Imdb code in exremely invalid ( > 300 errors on one page), 
+      # Imdb code in exrtemely invalid (> 300 errors per one page), 
       # so we need to clean it before any parsing
       raw_html = open("http://www.imdb.com/name/nm#{@id}").read
       cleared_html = raw_html.gsub("<div class=\"clear\"/>&nbsp;</div>", '')
