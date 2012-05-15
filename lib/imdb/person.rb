@@ -74,7 +74,7 @@ module Imdb
         director:   as('Director').map { |m| Movie.new(m) }, 
         composer:   as('Composer').map { |m| Movie.new(m) },
         producer:   as('Producer').map { |m| Movie.new(m) },
-        pelf:       as('Self').map { |m| Movie.new(m) },
+        self:       as('Self').map { |m| Movie.new(m) },
         soundtrack: as('Soundtrack').map { |m| Movie.new(m) }
       }
     end
