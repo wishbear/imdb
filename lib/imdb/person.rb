@@ -56,7 +56,12 @@ module Imdb
       
       begin
         person_page.at("#filmo-head-#{role}").next_element.search('.filmo-row b a').map do |e| 
-          e.get_attribute('href')[/tt(\d+)/, 1]
+          id = e.get_attribute('href')[/tt(\d+)/, 1]
+
+          {
+            id: Movie.new(id),
+            role: e.content
+          }
         end
       rescue
         []
@@ -68,14 +73,14 @@ module Imdb
     #
     def filmography
       {
-        writer:     as('Writer').map { |m| Movie.new(m) }, 
-        actor:      as('Actor').map { |m| Movie.new(m) }, 
-        actress:    as('Actress').map { |m| Movie.new(m) }, 
-        director:   as('Director').map { |m| Movie.new(m) }, 
-        composer:   as('Composer').map { |m| Movie.new(m) },
-        producer:   as('Producer').map { |m| Movie.new(m) },
-        pelf:       as('Self').map { |m| Movie.new(m) },
-        soundtrack: as('Soundtrack').map { |m| Movie.new(m) }
+        writer:     as('Writer'),
+        actor:      as('Actor'),
+        actress:    as('Actress'),
+        director:   as('Director'),
+        composer:   as('Composer'),
+        producer:   as('Producer'),
+        pelf:       as('Self'),
+        soundtrack: as('Soundtrack')
       }
     end
     
