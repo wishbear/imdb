@@ -88,7 +88,7 @@ module Imdb
         director:   as('Director'),
         composer:   as('Composer'),
         producer:   as('Producer'),
-        pelf:       as('Self'),
+        self:       as('Self'),
         soundtrack: as('Soundtrack')
       }
     end
