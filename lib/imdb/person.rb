@@ -58,9 +58,18 @@ module Imdb
         person_page.at("#filmo-head-#{role}").next_element.search('.filmo-row b a').map do |e| 
           id = e.get_attribute('href')[/tt(\d+)/, 1]
 
+          content = e.parent.parent.search('a').last.try(:content)
+          if content.nil?
+            p = e.parent.parent
+            # e.parent.children.remove
+            p.chidren.remove
+
+            content = p.content
+          end
+
           {
-            id: Movie.new(id),
-            role: e.content
+            id:   Movie.new(id),
+            role: content.strip
           }
         end
       rescue
