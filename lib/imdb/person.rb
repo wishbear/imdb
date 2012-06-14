@@ -58,13 +58,22 @@ module Imdb
         person_page.at("#filmo-head-#{role}").next_element.search('.filmo-row b a').map do |e| 
           id = e.get_attribute('href')[/tt(\d+)/, 1]
 
-          content = e.parent.parent.search('a').last.try(:content)
-          if content.nil?
-            p = e.parent.parent
-            # e.parent.children.remove
-            p.chidren.remove
+          # content = e.parent.parent.search('a').last.try(:content)
+          # if content.nil?
+          #   p = e.parent.parent
+          #   # e.parent.children.remove
+          #   p.chidren.remove
 
-            content = p.content
+          #   content = p.content
+          # end
+
+          content = e.parent.parent.search('a').last.try(:content)
+          if content.nil? || e.parent.parent.search('a').length <= 2
+            p = e.parent.parent
+            # p.children.each { |c| c.remove unless c.is_a?(Nokogiri::XML::Text) }
+
+            # content = p.content
+            content = p.children.reverse.find { |c| c.is_a?(Nokogiri::XML::Text) }.content
           end
 
           {
@@ -72,7 +81,8 @@ module Imdb
             role: content.strip
           }
         end
-      rescue
+      rescue Exception => e
+        puts "Exception: #{e} => #{e.message}\n#{e.backtrace.join("\n")}"
         []
       end
     end
