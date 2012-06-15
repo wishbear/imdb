@@ -1,3 +1,5 @@
+require 'date'
+
 module Imdb
 
   # Represents a Movie on IMDB.com
@@ -177,7 +179,9 @@ module Imdb
 
     # Returns release date for the movie.
     def release_date
-      sanitize_release_date(document.search("h5[text()*='Release Date']").first.next_element.inner_html.to_s.strip) rescue nil
+      result = Nokogiri(open("http://www.imdb.com/title/tt#{@id}/releaseinfo")).at('#tn15content table').search('tr')[1].search('td')[1]  rescue nil
+      Date.parse(result.content) rescue nil
+      # sanitize_release_date(document.search("h5[text()*='Release Date']").first.next_element.inner_html.to_s.strip) rescue nil
     end
 
     private
@@ -189,7 +193,7 @@ module Imdb
 
     # Use HTTParty to fetch the raw HTML for this movie.
     def self.find_by_id(imdb_id)
-      open("http://akas.imdb.com/title/tt#{imdb_id}/combined")
+      RestClient.get("http://akas.imdb.com/title/tt#{imdb_id}/combined", accept_language: 'en-US,en;q=0.8')
     end
 
     # Convenience method for search

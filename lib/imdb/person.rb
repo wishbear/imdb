@@ -56,9 +56,33 @@ module Imdb
       
       begin
         person_page.at("#filmo-head-#{role}").next_element.search('.filmo-row b a').map do |e| 
-          e.get_attribute('href')[/tt(\d+)/, 1]
+          id = e.get_attribute('href')[/tt(\d+)/, 1]
+
+          # content = e.parent.parent.search('a').last.try(:content)
+          # if content.nil?
+          #   p = e.parent.parent
+          #   # e.parent.children.remove
+          #   p.chidren.remove
+
+          #   content = p.content
+          # end
+
+          content = e.parent.parent.search('a').last.try(:content)
+          if content.nil? || e.parent.parent.search('a').length <= 2
+            p = e.parent.parent
+            # p.children.each { |c| c.remove unless c.is_a?(Nokogiri::XML::Text) }
+
+            # content = p.content
+            content = p.children.reverse.find { |c| c.is_a?(Nokogiri::XML::Text) }.content
+          end
+
+          {
+            id:   Movie.new(id),
+            role: content.strip
+          }
         end
-      rescue
+      rescue Exception => e
+        puts "Exception: #{e} => #{e.message}\n#{e.backtrace.join("\n")}"
         []
       end
     end
@@ -68,14 +92,14 @@ module Imdb
     #
     def filmography
       {
-        writer:     as('Writer').map { |m| Movie.new(m) }, 
-        actor:      as('Actor').map { |m| Movie.new(m) }, 
-        actress:    as('Actress').map { |m| Movie.new(m) }, 
-        director:   as('Director').map { |m| Movie.new(m) }, 
-        composer:   as('Composer').map { |m| Movie.new(m) },
-        producer:   as('Producer').map { |m| Movie.new(m) },
-        self:       as('Self').map { |m| Movie.new(m) },
-        soundtrack: as('Soundtrack').map { |m| Movie.new(m) }
+        writer:     as('Writer'),
+        actor:      as('Actor'),
+        actress:    as('Actress'),
+        director:   as('Director'),
+        composer:   as('Composer'),
+        producer:   as('Producer'),
+        self:       as('Self'),
+        soundtrack: as('Soundtrack')
       }
     end
     
