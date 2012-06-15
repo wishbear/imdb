@@ -26,4 +26,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'gokdok'
   s.add_development_dependency 'rdoc', '~> 3.11'
   s.add_development_dependency 'fakeweb'
+  s.add_development_dependency 'rest-client'
 end
