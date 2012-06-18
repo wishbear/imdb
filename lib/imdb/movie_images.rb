@@ -36,6 +36,7 @@ module Imdb
       end
     end
 
+
     ##
     #  Getting all links to pages containing high resolution images
     #    @return <Array>
