@@ -57,11 +57,16 @@ module Imdb
 
     ##
     #  Getting links to high resolution images
+    #  NOTE: Why not with threads? - Imdb output 503's page on deeply-concurrent image downloading
     #    @return <Array>
     #
     def links
       links_to_image_pages.map do |url|
-        document("http://akas.imdb.com#{url}").css("img#primary-img").first['src'] rescue nil 
+        doc = document("http://akas.imdb.com#{url}")
+        {
+          url: doc.css("img#primary-img").first['src'],
+          description: doc.css("div#photo-caption").first.text
+        } rescue nil
       end.compact
     end
 
