@@ -19,7 +19,7 @@ module Imdb
 
     ##
     #  Gettign common count of images associated with movie
-    #  @return <Int>
+    #    @return <Int>
     #
     def count
       $1.to_i if document.css("div.leftright #left").first.text =~ /(\d{1,})\sphoto/
@@ -28,7 +28,7 @@ module Imdb
 
     ##
     #  Getting urls for all pages containing photo imdexes
-    #  @return <Array>
+    #    @return <Array>
     #
     def image_indexes
       1.upto(count/48 + 1).map do |page_number|
@@ -38,6 +38,7 @@ module Imdb
 
     ##
     #  Getting all links to pages containing high resolution images
+    #    @return <Array>
     #
     def links_to_image_pages
       image_indexes.map do |index|
@@ -55,12 +56,13 @@ module Imdb
 
     ##
     #  Getting links to high resolution images
+    #    @return <Array>
     #
     def links
       links_to_image_pages.map do |url|
         document("http://akas.imdb.com#{url}").css("img#primary-img").first['src'] rescue nil 
       end.compact
-
     end
+
   end # class MovieImages
 end # module Imdb
