@@ -6,6 +6,7 @@ require 'rubygems'
 require 'nokogiri'
 
 require 'imdb/movie'
+require 'imdb/movie_images'
 require 'imdb/person'
 
 require 'imdb/movie_list'
