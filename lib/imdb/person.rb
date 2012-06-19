@@ -15,7 +15,6 @@ module Imdb
     end
 
     def birthdate
-      
       date_month = bio_document.at("h5[text()*='Date of Birth']").next_element.inner_text.strip rescue ""
       year = bio_document.at("a[@href*='birth_year']").inner_text.strip rescue ""
       Date.parse("#{date_month} #{year}") rescue nil
@@ -25,7 +24,6 @@ module Imdb
       date_month = bio_document.at("h5[text()*='Date of Death']").next_element.inner_text.strip rescue ""
       year = bio_document.at("a[@href*='death_date']").inner_text.strip rescue ""
       Date.parse("#{date_month} #{year}") rescue nil
-      
     end
 
     def nationality
@@ -43,17 +41,23 @@ module Imdb
     def photo
       photo_document.at("img#primary-img").get_attribute('src') if photo_document 
     end
+    
+    ##
+    #  Imdb code in exrtemely invalid (> 300 errors per one page), 
+    #  so we need to clean it before any parsing
+    #    @return <Nokogiri::HTML>
+    #
+    def cleared_document url
+      raw_html = open(url).read
+      cleared_html = raw_html.gsub("<div class=\"clear\"/>&nbsp;</div>", '')
+      Nokogiri::HTML(cleared_html)
+    end
 
     ##
     #  Getting array with person appearances as {role}
     #
     def as role
-      # Imdb code in exrtemely invalid (> 300 errors per one page), 
-      # so we need to clean it before any parsing
-      raw_html = open("http://www.imdb.com/name/nm#{@id}").read
-      cleared_html = raw_html.gsub("<div class=\"clear\"/>&nbsp;</div>", '')
-      person_page = Nokogiri::HTML(cleared_html)
-      
+      person_page = cleared_document("http://www.imdb.com/name/nm#{@id}")
       begin
         person_page.at("#filmo-head-#{role}").next_element.search('.filmo-row b a').map do |e| 
           id = e.get_attribute('href')[/tt(\d+)/, 1]
@@ -101,6 +105,29 @@ module Imdb
         self:       as('Self'),
         soundtrack: as('Soundtrack')
       }
+    end
+
+    ##
+    #  Getting array with person appearances as {role}
+    #  NOTE: this method used in MovieTruly Person parser
+    #    @return <Array>
+    #
+    def role_simplified role
+      person_page = cleared_document("http://www.imdb.com/name/nm#{@id}")
+      person_page.at("#filmo-head-#{role}").next_element.search('.filmo-row b a').map do |e| 
+        id = e.get_attribute('href')[/tt(\d+)/, 1]
+        Movie.new(id)
+      end rescue []
+    end
+
+    ##
+    #  Getting all appearances of Person
+    #  NOTE: this method used in MovieTruly Person parser
+    #    @return <Hash>
+    #
+    def filmography_simplified
+      roles = %w(Writer Actor Actress Director Composer Producer Self Soundtrack)
+      Hash[roles.map { |role| [role.downcase.to_sym, role_simplified(role)] }]
     end
     
     def main_document
