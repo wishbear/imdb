@@ -58,27 +58,26 @@ module Imdb
         person_page.at("#filmo-head-#{role}").next_element.search('.filmo-row b a').map do |e| 
           id = e.get_attribute('href')[/tt(\d+)/, 1]
 
-          # content = e.parent.parent.search('a').last.try(:content)
-          # if content.nil?
-          #   p = e.parent.parent
-          #   # e.parent.children.remove
-          #   p.chidren.remove
+          content = e.parent.parent
 
-          #   content = p.content
-          # end
+          br_found = false
+          content.children.each do |child|
+            child.remove
 
-          content = e.parent.parent.search('a').last.try(:content)
-          if content.nil? || e.parent.parent.search('a').length <= 2
-            p = e.parent.parent
-            # p.children.each { |c| c.remove unless c.is_a?(Nokogiri::XML::Text) }
-
-            # content = p.content
-            content = p.children.reverse.find { |c| c.is_a?(Nokogiri::XML::Text) }.content
+            if child.name == "br"
+              break
+            end
           end
+
+          result = content.children.first
+
+          role_title = if result.is_a?(Nokogiri::XML::Text) || result.name == 'a'
+                         result.content.strip.gsub(/\s+/, ' ')
+                       end
 
           {
             id:   Movie.new(id),
-            role: content.strip
+            role: role_title
           }
         end
       rescue Exception => e
