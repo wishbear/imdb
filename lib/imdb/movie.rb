@@ -125,7 +125,7 @@ module Imdb
 
     # Returns a string containing the plot.
     def plot
-      sanitize_plot(document.search("h5[text()='Plot:'] ~ div").first.inner_html) rescue nil
+      sanitize_plot(document.search("h5[text()='Plot:'] ~ div").first.inner_html)
     end
 
     # Returns a string containing the URL to the movie poster.
@@ -207,13 +207,12 @@ module Imdb
 
     def sanitize_plot(the_plot)
       the_plot = the_plot.imdb_strip_tags
-
-      the_plot = the_plot.gsub(/add\ssummary|full\ssummary/i, "")
+      the_plot = the_plot.gsub(/(add\ssummary|full\ssummary)/i, "")
       the_plot = the_plot.gsub(/add\ssynopsis|full\ssynopsis/i, "")
       the_plot = the_plot.gsub(/&nbsp;|&raquo;/i, "")
+      the_plot = the_plot.gsub(/[\|\s\u00BB\u00A0]+/, " ")
       the_plot = the_plot.gsub(/see|more/i, "")
       the_plot = the_plot.gsub(/\|/i, "")
-
       the_plot = the_plot.strip.imdb_unescape_html
     end
 
