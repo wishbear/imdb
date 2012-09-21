@@ -100,7 +100,7 @@ module Imdb
 
     # Returns the url to the "Watch a trailer" page
     def trailer_url
-      'http://imdb.com' + document.at("a[@href*='/video/screenplay/']")["href"] rescue nil
+      'http://imdb.com' + document.at("a[@href*='/video/imdb/vi']")["href"] rescue nil
     end
 
     # Returns an array of genres (as strings)
@@ -188,7 +188,7 @@ module Imdb
 
     # Returns a new Nokogiri document for parsing.
     def document
-      @document ||= Nokogiri(Imdb::Movie.find_by_id(@id))
+      @document ||= Nokogiri(Imdb::Movie.find_by_id(@id).force_encoding("ASCII-8BIT"))
     end
 
     # Use HTTParty to fetch the raw HTML for this movie.
