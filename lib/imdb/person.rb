@@ -77,7 +77,7 @@ module Imdb
 
           role_title = if result.is_a?(Nokogiri::XML::Text) || result.name == 'a'
                          result.content.strip.gsub(/\s+/, ' ')
-                       end
+                       end rescue nil
 
           {
             id:   Movie.new(id),
