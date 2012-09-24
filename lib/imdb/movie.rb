@@ -93,6 +93,19 @@ module Imdb
       rescue []
     end
     
+    # Returns composer
+    def composers
+      composers = []
+      document.search("h5[text()^='Soundtrack'] ~ * a").each do |a|
+        id = document
+          .xpath("//tr[td/h5/a/text() = 'Original Music by']").first.next_sibling
+          .xpath("td/a").first[:href].sub(%r{^/name/nm(.*)/}, '\1')
+        composers << Person.new(id)
+      end
+      composers
+    rescue []
+    end
+    
     # Returns the name of the director
     def director
       document.search("h5[text()^='Director'] ~ * a").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
