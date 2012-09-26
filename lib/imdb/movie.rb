@@ -201,7 +201,7 @@ module Imdb
 
     # Returns a new Nokogiri document for parsing.
     def document
-      @document ||= Nokogiri(Imdb::Movie.find_by_id(@id).force_encoding("ASCII-8BIT"))
+      @document ||= Nokogiri(Imdb::Movie.find_by_id(@id).encode("UTF-8"))
     end
 
     # Use HTTParty to fetch the raw HTML for this movie.
