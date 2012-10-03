@@ -38,7 +38,7 @@ module Imdb
       end
       result.compact!
     end
-    
+
     def awards_document
       @awards_document ||= Nokogiri(open( "http://akas.imdb.com/title/tt#{@id}/awards"))
     end
@@ -55,7 +55,7 @@ module Imdb
         cast << member
       end
       cast
-      rescue []
+    rescue []
     end
 
     # Returns an array with cast members
@@ -82,7 +82,7 @@ module Imdb
       }
       return memb_char
     end
-    
+
     # Returns a array of the director hashes
     def directors
       directors = []
@@ -90,22 +90,22 @@ module Imdb
         directors << Person.new(a['href'].sub(%r{^/name/nm(.*)/}, '\1'))
       end
       directors
-      rescue []
+    rescue []
     end
-    
+
     # Returns composer
     def composers
       composers = []
       document.search("h5[text()^='Soundtrack'] ~ * a").each do |a|
         id = document
-          .xpath("//tr[td/h5/a/text() = 'Original Music by']").first.next_sibling
-          .xpath("td/a").first[:href].sub(%r{^/name/nm(.*)/}, '\1')
+        .xpath("//tr[td/h5/a/text() = 'Original Music by']").first.next_sibling
+        .xpath("td/a").first[:href].sub(%r{^/name/nm(.*)/}, '\1')
         composers << Person.new(id)
       end
       composers
     rescue []
     end
-    
+
     # Returns the name of the director
     def director
       document.search("h5[text()^='Director'] ~ * a").map { |link| link.inner_html.strip.imdb_unescape_html } rescue []
